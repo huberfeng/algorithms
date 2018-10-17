@@ -40,6 +40,8 @@ func (s Int) CompareTo(p interface{}) bool {
 
 
 type Sort struct {
+	// 归并排序辅助数组
+	mergeSortAux []Comparable
 }
 
 //选择排序
@@ -82,35 +84,40 @@ func (s *Sort) Shellsort(a []Comparable) {
 	}
 }
 
+func (s *Sort) Mergesort(a []Comparable) {
+	s.mergeSortAux = make([]Comparable, len(a))
+	s.MergesortUpToDown(a, 0, len(a)-1)
+}
 
 func (s *Sort) Merge(a []Comparable, lo, mid, hi int) {
 	i := lo
 	j := mid + 1
-	aux := make([]Comparable, len(a))
-	copy(aux, a)
+	//aux := make([]Comparable, hi-lo+1)
+	//copy(aux, a[lo:hi+1])
 
-	//for k:=0; k < len(a); k++ {
-	//	aux[k] = a[k]
-	//}
+	//将a[lo...hi] 复制到 mergeSortAux[lo...hi]
+	for k:=lo; k <= hi; k++ {
+		s.mergeSortAux[k] = a[k]
+	}
 	for k := lo; k <= hi; k++ {
 		if i > mid {
-			a[k] = aux[j]
+			a[k] = s.mergeSortAux[j]
 			j++
 		}else if j > hi {
-			a[k] = aux[i]
+			a[k] = s.mergeSortAux[i]
 			i++
-		}else if Less(aux[i], aux[j]) {
-			a[k] = aux[i]
+		}else if Less(s.mergeSortAux[i], s.mergeSortAux[j]) {
+			a[k] = s.mergeSortAux[i]
 			i++
 		}else {
-			a[k] = aux[j]
+			a[k] = s.mergeSortAux[j]
 			j++
 		}
 	}
 }
 
 // 归并排序 自顶向下
-func  (s *Sort) Mergesort(a []Comparable, lo, hi int) {
+func  (s *Sort) MergesortUpToDown(a []Comparable, lo, hi int) {
 	// 优化1：对于小数组，使用插入排序，减少函数调用，性能提升明显
 	if hi - lo < 15 {
 		s.Insert(a[lo:hi+1])
@@ -120,8 +127,8 @@ func  (s *Sort) Mergesort(a []Comparable, lo, hi int) {
 		return
 	}
 	mid := lo + (hi - lo)/2
-	s.Mergesort(a, lo, mid)
-	s.Mergesort(a, mid+1, hi)
+	s.MergesortUpToDown(a, lo, mid)
+	s.MergesortUpToDown(a, mid+1, hi)
 	// 优化2：如果a[mid]< a[mid+1], 说明a[lo...hi]已经有序，不再归并
 	if Less(a[mid], a[mid+1]) {
 		return
@@ -154,7 +161,7 @@ func (s *Sort) Time(alg string, a []Comparable) time.Duration {
 	case "shell":
 		s.Shellsort(a)
 	case "merge":
-		s.Mergesort(a, 0 ,len(a)-1)
+		s.Mergesort(a)
 	case "MergeSortDownToUp":
 		s.MergeSortDownToUp(a)
 	}

@@ -28,25 +28,25 @@ func TestSort_Shellsort(t *testing.T) {
 }
 
 func TestSort_Merge(t *testing.T) {
-	a := []Comparable{Int(1),Int(3),Int(7),Int(4),Int(5)}
+	a := []Comparable{Int(1),Int(3),Int(7),Int(4),Int(5),Int(100)}
 	sort := new(Sort)
-	sort.Merge(a,0,2,4)
+	sort.Merge(a,0,2,5)
 	fmt.Println(a)
 }
 
 func TestSort_Mergesort(t *testing.T) {
 	a := []Comparable{Int(1),Int(3),Int(7),Int(4),Int(5)}
 	sort := new(Sort)
-	sort.Mergesort(a,0,4)
+	sort.Mergesort(a)
 	fmt.Println(a)
 }
 
 //归并排序的算法有问题, 怕不是个假的归并
 func TestPerformance(t *testing.T) {
-	Performance("selection", 10000, 1)
-	Performance("insert", 10000, 1)
-	Performance("shell", 10000, 1)
-	Performance("merge", 10000,1)
+	Performance("selection", 100000, 1)
+	Performance("insert", 100000, 1)
+	Performance("shell", 100000, 1)
+	Performance("merge", 100000,1)
 	Performance("MergeSortDownToUp", 10000,1)
 }
 
